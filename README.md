@@ -1,6 +1,6 @@
 # LayersSaver - Save Layers Node for ComfyUI
 
-This custom node for ComfyUI allows you to create layers of an image based on input masks into a PSD file. The node provides flexibility to include the original image and creates separate layers for each masked region. This can be particularly useful for graphic design, image processing, and tasks requiring manipulation of image layers.
+This custom node for ComfyUI allows you to create layers of an image based on input masks and save them into a PSD file. The node provides flexibility to include the original image and creates separate layers for each masked region. This can be particularly useful for graphic design, image processing, and tasks requiring manipulation of image layers.
 
 ## Example
 ![Example Workflow](files/workflow.png)
