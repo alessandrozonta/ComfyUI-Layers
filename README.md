@@ -23,7 +23,7 @@ To use this custom node in ComfyUI, follow these steps:
     ```sh
     git clone https://github.com/yourusername/comfyui-layerssaver.git
     ```
-2. Install the following libraries
+2. Install the following libraries or run `install.py`
     - `pip install pytoshop -I --no-cache-dir`
     - `pip install psd-tools --no-deps`
 3. Restart ComfyUI to load the new node.
