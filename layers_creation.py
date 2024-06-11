@@ -50,7 +50,8 @@ class PSDLayerCreator:
             # Generate random name using current time
             timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
             random_name = f"layered_image_{timestamp}.psd"
-            output_path = os.path.join(os.path.dirname(output_path), random_name)  # Join path with random name
+            os.makedirs(output_path, exist_ok=True)
+            output_path = os.path.join(output_path, random_name)  # Join path with random name
 
         # Create a new empty PSD document (consider using desired color mode if needed)
         psd = pytoshop.core.PsdFile(num_channels=4, height=input_image.shape[0], width=input_image.shape[1])
