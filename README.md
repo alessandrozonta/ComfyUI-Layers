@@ -1,16 +1,33 @@
 # LayersSaver - Save Layers Node for ComfyUI
+These two custom nodes for ComfyUI allows you to save images into a PSD file as layers.
+This can be particularly useful for graphic design, image processing, and tasks requiring manipulation of image layers.
 
-This custom node for ComfyUI allows you to create layers of an image based on input masks and save them into a PSD file. The node provides flexibility to include the original image and creates separate layers for each masked region. This can be particularly useful for graphic design, image processing, and tasks requiring manipulation of image layers.
+## LayersSaver - Save Layer
+This custom node for ComfyUI allows you to create layers of an image based on input masks and save them into a PSD file. The node provides flexibility to include the original image and creates separate layers for each masked region. 
 
-## Example
+### Example
 ![Example Workflow](files/workflow.png)
 You can find the example workflow [here](files/example.json)
 
-## Features
+### Features
 
 - **Input Image Handling**: Processes a single input image with batch dimension removed.
 - **Mask Application**: Applies multiple masks to the input image, creating separate layers for each masked region.
 - **Original Image Inclusion**: Optionally includes the original image as a separate layer.
+- **Alpha Channel Management**: Ensures the input image includes an alpha channel for transparency.
+- **Dynamic PSD Naming**: Generates a unique PSD filename based on the current timestamp if not specified.
+- **PSD File Creation**: Saves the resulting layers into a PSD file with specified or dynamically generated filename.
+
+## LayersSaver - Save Layer From Images
+This custom node for ComfyUI allows you to create layers of an image based on all the input images. Every image in the input batch will be saved as a separate layer in the output PSD.
+
+### Example
+![Example Workflow](files/workflow_img.png)
+You can find the example workflow [here](files/batch_layers.json)
+
+### Features
+
+- **Input Image Handling**: Processes a infinite bach dimension input image.
 - **Alpha Channel Management**: Ensures the input image includes an alpha channel for transparency.
 - **Dynamic PSD Naming**: Generates a unique PSD filename based on the current timestamp if not specified.
 - **PSD File Creation**: Saves the resulting layers into a PSD file with specified or dynamically generated filename.

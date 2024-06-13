@@ -1,11 +1,46 @@
 import unittest
 import torch
-from layers_creation import PSDLayerCreator
+from layers_creation import PSDLayerCreator, PSDLayerCreatorFromImagesOnly
 import os
 import glob
-
+from PIL import Image
+from torchvision import transforms
 
 class LayerDividerTest(unittest.TestCase):
+
+    def test_multiple_batch(self):
+        """Tests the function with multiple batches."""
+        input_image = torch.rand(4, 256, 256, 3)
+        output_path = "./test.psd"
+        
+        layer_divide = PSDLayerCreatorFromImagesOnly()
+        try:
+            layer_divide.main(input_image, output_path)
+            # Since we're not saving the PSD, success means no exceptions
+            print("Test successful: Layer creation logic seems functional for multiple images.")
+        except Exception as e:
+            self.fail(f"Unexpected error: {e}")
+        psd_files = glob.glob(os.path.join(os.path.dirname(output_path), "*.psd"))
+        # Be sure the file is saved
+        self.assertEqual(len(psd_files), 1)
+        os.remove(psd_files[0])
+        
+    def test_one_batch(self):
+        """Tests the function with multiple batches."""
+        input_image = torch.rand(1, 256, 256, 3)
+        output_path = "./test.psd"
+        
+        layer_divide = PSDLayerCreatorFromImagesOnly()
+        try:
+            layer_divide.main(input_image, output_path)
+            # Since we're not saving the PSD, success means no exceptions
+            print("Test successful: Layer creation logic seems functional for multiple images.")
+        except Exception as e:
+            self.fail(f"Unexpected error: {e}")
+        psd_files = glob.glob(os.path.join(os.path.dirname(output_path), "*.psd"))
+        # Be sure the file is saved
+        self.assertEqual(len(psd_files), 1)
+        os.remove(psd_files[0])
 
     def test_invalid_batch_input_dimensions(self):
         """Tests the function with mismatched mask dimensions."""
@@ -91,7 +126,7 @@ class LayerDividerTest(unittest.TestCase):
         """Tests the function with without giving the name of the file as output"""
         input_image = torch.rand(1, 256, 256, 4)
         masks = torch.rand(10, 256, 256) 
-        output_path = ""  # Replace with a writable location for testing
+        output_path = "./"  # Replace with a writable location for testing
         original_image = True
 
         layer_divide = PSDLayerCreator()
@@ -102,7 +137,7 @@ class LayerDividerTest(unittest.TestCase):
             print("Test successful: Layer creation logic seems functional for multiple masks.")
         except Exception as e:
             self.fail(f"Unexpected error: {e}")
-        psd_files = glob.glob(os.path.join(output_path, "*.psd"))
+        psd_files = glob.glob(os.path.join(os.path.dirname(output_path), "*.psd"))
         # Be sure the file is saved
         self.assertEqual(len(psd_files), 1)
         os.remove(psd_files[0])

@@ -120,11 +120,94 @@ class PSDLayerCreator:
             print(f"Error saving PSD: {e}")
         return (all_masked_images,)
         
+class PSDLayerCreatorFromImagesOnly:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "input_image": ("IMAGE",),
+                "output_path": ("STRING", {}),
+            }
+        }
+        
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("layers",)
+    FUNCTION = "main"
+
+    CATEGORY = "LayersDivider"
+    
+    def main(self, input_image, output_path):
+        # Ensure the input is a batch
+        print(input_image.shape)
+        if input_image.ndim != 4 or input_image.shape[3] not in [1, 3, 4]:
+            raise ValueError("Input image should have shape [batch_size, channels, height, width]")
+
+        # Determine the number of images in the batch
+        batch_size, height, width, channels = input_image.shape
+        
+        # Add alpha channel if not present
+        if channels != 4:  # Check if image has 4 channels (RGBA)
+            # Create an alpha channel with full opacity
+            alpha_channel = torch.ones(batch_size, height, width, 1, device=input_image.device)
+            # Concatenate channels to create RGBA image
+            input_image = torch.cat((input_image, alpha_channel), dim=3)
+        
+        
+        # check if output_path contains the name of the file
+        if not output_path.endswith(".psd"):
+            # Generate random name using current time
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            random_name = f"layered_image_{timestamp}.psd"
+            os.makedirs(output_path, exist_ok=True)
+            output_path = os.path.join(output_path, random_name)  # Join path with random name
+
+        # Create a new empty PSD document (consider using desired color mode if needed)
+        psd = pytoshop.core.PsdFile(num_channels=4, height=height, width=width)
+        
+        # Create and add image layers
+        for i in range(batch_size):
+            print(f"Processing image {i+1}/{batch_size}")
+            
+            image = input_image[i]  # Select the i-th image
+
+            # Convert image to numpy array
+            image_numpy = image.cpu().detach().numpy()
+            
+            # Convert image to uint8 format
+            image_uint8 = (image_numpy * 255).astype(np.uint8)
+
+            # Create layer data objects from image channels
+            layer_data = [layers.ChannelImageData(image=image_uint8[:, :, channel], compression=1) for channel in range(image.shape[2])]
+                    
+            # Create a new layer record with the layer data
+            new_layer_record = layers.LayerRecord(
+                channels={-1: layer_data[3], 0: layer_data[0], 1: layer_data[1], 2: layer_data[2]},
+                top=0, bottom=height, left=0, right=width,
+                blend_mode=BlendMode.normal,
+                name=f"Image_{i+1}",
+                opacity=255,
+            )
+            psd.layer_and_mask_info.layer_info.layer_records.append(new_layer_record)
+        
+        
+        # Save the PSD file at the specified output path
+        try:
+            with open(f"{output_path}", 'wb') as fd2:
+                psd.write(fd2)
+            print(f"Masked images saved as PSD with separate layers: {output_path}")
+        except Exception as e:
+            print(f"Error saving PSD: {e}")
+        return (input_image,)
 
 NODE_CLASS_MAPPINGS = {
-    "LayersSaver - Save Layer": PSDLayerCreator
+    "LayersSaver - Save Layer": PSDLayerCreator,
+    "LayersSaver - Save Layer From Images": PSDLayerCreatorFromImagesOnly
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "LayerDividerDivideLayer": "LayersSaver - Save Layer"
+    "LayerDividerDivideLayer": "LayersSaver - Save Layer",
+    "PSDLayerCreatorFromImagesOnly": "LayersSaver - Save Layer From Images"
 }
