@@ -9,6 +9,6 @@ Repository = "https://github.com/alessandrozonta/ComfyUI-Layers"
 #  Used by Comfy Registry https://comfyregistry.org
 
 [tool.comfy]
-PublisherId = ""
+PublisherId = "alezonta"
 DisplayName = "ComfyUI-Layers"
 Icon = ""
