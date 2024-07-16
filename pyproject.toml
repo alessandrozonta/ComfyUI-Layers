@@ -1,0 +1,14 @@
+[project]
+name = "comfyui-layers"
+description = "This custom node for ComfyUI allows you to create layers of an image based on input masks and save them into a PSD file."
+version = "1.0.0"
+license = "LICENSE"
+
+[project.urls]
+Repository = "https://github.com/alessandrozonta/ComfyUI-Layers"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = "alezonta"
+DisplayName = "ComfyUI-Layers"
+Icon = ""
